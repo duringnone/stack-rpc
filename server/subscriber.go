@@ -56,7 +56,7 @@ func newSubscriber(topic string, sub interface{}, opts ...SubscriberOption) Subs
 
 		endpoints = append(endpoints, &registry.Endpoint{
 			Name:    "Func",
-			Request: extractSubValue(typ),
+			Request: ExtractSubValue(typ),
 			Metadata: map[string]string{
 				"topic":      topic,
 				"subscriber": "true",
@@ -84,7 +84,7 @@ func newSubscriber(topic string, sub interface{}, opts ...SubscriberOption) Subs
 
 			endpoints = append(endpoints, &registry.Endpoint{
 				Name:    name + "." + method.Name,
-				Request: extractSubValue(method.Type),
+				Request: ExtractSubValue(method.Type),
 				Metadata: map[string]string{
 					"topic":      topic,
 					"subscriber": "true",

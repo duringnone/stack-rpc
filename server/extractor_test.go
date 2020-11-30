@@ -25,7 +25,7 @@ func TestExtractEndpoint(t *testing.T) {
 	var endpoints []*registry.Endpoint
 
 	for m := 0; m < typ.NumMethod(); m++ {
-		if e := extractEndpoint(typ.Method(m)); e != nil {
+		if e := ExtractEndpoint(typ.Method(m)); e != nil {
 			endpoints = append(endpoints, e)
 		}
 	}

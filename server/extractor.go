@@ -8,7 +8,7 @@ import (
 	"github.com/stack-labs/stack-rpc/registry"
 )
 
-func extractValue(v reflect.Type, d int) *registry.Value {
+func ExtractValue(v reflect.Type, d int) *registry.Value {
 	if d == 3 {
 		return nil
 	}
@@ -29,7 +29,7 @@ func extractValue(v reflect.Type, d int) *registry.Value {
 	case reflect.Struct:
 		for i := 0; i < v.NumField(); i++ {
 			f := v.Field(i)
-			val := extractValue(f.Type, d+1)
+			val := ExtractValue(f.Type, d+1)
 			if val == nil {
 				continue
 			}
@@ -66,7 +66,7 @@ func extractValue(v reflect.Type, d int) *registry.Value {
 	return arg
 }
 
-func extractEndpoint(method reflect.Method) *registry.Endpoint {
+func ExtractEndpoint(method reflect.Method) *registry.Endpoint {
 	if method.PkgPath != "" {
 		return nil
 	}
@@ -92,8 +92,8 @@ func extractEndpoint(method reflect.Method) *registry.Endpoint {
 		stream = true
 	}
 
-	request := extractValue(reqType, 0)
-	response := extractValue(rspType, 0)
+	request := ExtractValue(reqType, 0)
+	response := ExtractValue(rspType, 0)
 
 	ep := &registry.Endpoint{
 		Name:     method.Name,
@@ -112,7 +112,7 @@ func extractEndpoint(method reflect.Method) *registry.Endpoint {
 	return ep
 }
 
-func extractSubValue(typ reflect.Type) *registry.Value {
+func ExtractSubValue(typ reflect.Type) *registry.Value {
 	var reqType reflect.Type
 	switch typ.NumIn() {
 	case 1:
@@ -124,5 +124,5 @@ func extractSubValue(typ reflect.Type) *registry.Value {
 	default:
 		return nil
 	}
-	return extractValue(reqType, 0)
+	return ExtractValue(reqType, 0)
 }
