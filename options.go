@@ -4,26 +4,21 @@ import (
 	"context"
 	"time"
 
-	cmucp "github.com/stack-labs/stack-rpc/client/mucp"
-
-	httpt "github.com/stack-labs/stack-rpc/transport/http"
-
-	"github.com/stack-labs/stack-rpc/broker/http"
-
-	"github.com/stack-labs/stack-rpc/registry/mdns"
-
-	"github.com/stack-labs/stack-rpc/server/mucp"
-
 	"github.com/stack-labs/stack-rpc/broker"
+	"github.com/stack-labs/stack-rpc/broker/http"
 	"github.com/stack-labs/stack-rpc/client"
+	cmucp "github.com/stack-labs/stack-rpc/client/mucp"
 	"github.com/stack-labs/stack-rpc/client/selector"
 	"github.com/stack-labs/stack-rpc/cmd"
 	"github.com/stack-labs/stack-rpc/config"
 	"github.com/stack-labs/stack-rpc/logger"
 	"github.com/stack-labs/stack-rpc/pkg/cli"
 	"github.com/stack-labs/stack-rpc/registry"
+	"github.com/stack-labs/stack-rpc/registry/mdns"
 	"github.com/stack-labs/stack-rpc/server"
+	"github.com/stack-labs/stack-rpc/server/mucp"
 	"github.com/stack-labs/stack-rpc/transport"
+	httpt "github.com/stack-labs/stack-rpc/transport/http"
 )
 
 type Options struct {

@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/stack-labs/stack-rpc/transport"
-
 	maddr "github.com/stack-labs/stack-rpc/util/addr"
 	"github.com/stack-labs/stack-rpc/util/buf"
 	mnet "github.com/stack-labs/stack-rpc/util/net"

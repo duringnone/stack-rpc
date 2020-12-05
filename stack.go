@@ -4,9 +4,8 @@ package stack
 import (
 	"context"
 
-	cmucp "github.com/stack-labs/stack-rpc/client/mucp"
-
 	"github.com/stack-labs/stack-rpc/client"
+	cmucp "github.com/stack-labs/stack-rpc/client/mucp"
 	"github.com/stack-labs/stack-rpc/server"
 )
 

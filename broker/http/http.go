@@ -16,15 +16,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/stack-labs/stack-rpc/broker"
-
-	"github.com/stack-labs/stack-rpc/registry/mdns"
-
 	"github.com/google/uuid"
+	"github.com/stack-labs/stack-rpc/broker"
 	"github.com/stack-labs/stack-rpc/codec/json"
 	merr "github.com/stack-labs/stack-rpc/errors"
 	"github.com/stack-labs/stack-rpc/registry"
 	"github.com/stack-labs/stack-rpc/registry/cache"
+	"github.com/stack-labs/stack-rpc/registry/mdns"
 	maddr "github.com/stack-labs/stack-rpc/util/addr"
 	mnet "github.com/stack-labs/stack-rpc/util/net"
 	mls "github.com/stack-labs/stack-rpc/util/tls"

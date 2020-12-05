@@ -3,9 +3,8 @@ package grpc
 import (
 	"time"
 
-	"github.com/stack-labs/stack-rpc/broker/http"
-
 	"github.com/stack-labs/stack-rpc"
+	"github.com/stack-labs/stack-rpc/broker/http"
 	client "github.com/stack-labs/stack-rpc/client/grpc"
 	server "github.com/stack-labs/stack-rpc/server/grpc"
 )

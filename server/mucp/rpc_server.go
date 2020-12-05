@@ -12,18 +12,16 @@ import (
 	"sync"
 	"time"
 
-	codecu "github.com/stack-labs/stack-rpc/util/codec"
-
-	"github.com/stack-labs/stack-rpc/server"
-
 	"github.com/stack-labs/stack-rpc/broker"
 	"github.com/stack-labs/stack-rpc/codec"
 	raw "github.com/stack-labs/stack-rpc/codec/bytes"
 	"github.com/stack-labs/stack-rpc/metadata"
 	"github.com/stack-labs/stack-rpc/registry"
+	"github.com/stack-labs/stack-rpc/server"
 	"github.com/stack-labs/stack-rpc/transport"
 	"github.com/stack-labs/stack-rpc/util/addr"
-	log "github.com/stack-labs/stack-rpc/util/log"
+	codecu "github.com/stack-labs/stack-rpc/util/codec"
+	"github.com/stack-labs/stack-rpc/util/log"
 	mnet "github.com/stack-labs/stack-rpc/util/net"
 	"github.com/stack-labs/stack-rpc/util/socket"
 )

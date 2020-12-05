@@ -18,10 +18,9 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/stack-labs/stack-rpc/server"
-
 	"github.com/stack-labs/stack-rpc/codec"
 	merrors "github.com/stack-labs/stack-rpc/errors"
+	"github.com/stack-labs/stack-rpc/server"
 	"github.com/stack-labs/stack-rpc/util/log"
 )
 

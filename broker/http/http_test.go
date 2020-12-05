@@ -5,10 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stack-labs/stack-rpc/broker"
-
 	glog "github.com/go-log/log"
 	"github.com/google/uuid"
+	"github.com/stack-labs/stack-rpc/broker"
 	"github.com/stack-labs/stack-rpc/registry"
 	"github.com/stack-labs/stack-rpc/registry/memory"
 	"github.com/stack-labs/stack-rpc/util/log"
