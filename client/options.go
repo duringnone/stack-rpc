@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	httpt "github.com/stack-labs/stack-rpc/transport/http"
+
 	"github.com/stack-labs/stack-rpc/broker/http"
 
 	"github.com/stack-labs/stack-rpc/registry/mdns"
@@ -126,7 +128,7 @@ func newOptions(options ...Option) Options {
 	}
 
 	if opts.Transport == nil {
-		opts.Transport = transport.DefaultTransport
+		opts.Transport = httpt.NewTransport()
 	}
 
 	if opts.Context == nil {

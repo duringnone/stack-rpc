@@ -4,13 +4,14 @@ import (
 	"context"
 	"crypto/tls"
 
+	httpt "github.com/stack-labs/stack-rpc/transport/http"
+
 	"github.com/stack-labs/stack-rpc/broker/http"
 
 	"github.com/stack-labs/stack-rpc/registry/mdns"
 
 	"github.com/stack-labs/stack-rpc/codec"
 	"github.com/stack-labs/stack-rpc/server"
-	"github.com/stack-labs/stack-rpc/transport"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/encoding"
 )
@@ -87,7 +88,7 @@ func newOptions(opt ...server.Option) server.Options {
 	}
 
 	if opts.Transport == nil {
-		opts.Transport = transport.DefaultTransport
+		opts.Transport = httpt.NewTransport()
 	}
 
 	if len(opts.Address) == 0 {

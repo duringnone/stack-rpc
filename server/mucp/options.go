@@ -5,7 +5,7 @@ import (
 	"github.com/stack-labs/stack-rpc/codec"
 	"github.com/stack-labs/stack-rpc/registry/mdns"
 	"github.com/stack-labs/stack-rpc/server"
-	"github.com/stack-labs/stack-rpc/transport"
+	httpt "github.com/stack-labs/stack-rpc/transport/http"
 )
 
 func newOptions(opt ...server.Option) server.Options {
@@ -29,7 +29,7 @@ func newOptions(opt ...server.Option) server.Options {
 	}
 
 	if opts.Transport == nil {
-		opts.Transport = transport.DefaultTransport
+		opts.Transport = httpt.NewTransport()
 	}
 
 	if opts.RegisterCheck == nil {

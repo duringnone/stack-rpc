@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	httpt "github.com/stack-labs/stack-rpc/transport/http"
+
 	"github.com/stack-labs/stack-rpc/broker/http"
 
 	"github.com/stack-labs/stack-rpc/registry/mdns"
@@ -43,7 +45,7 @@ func newOptions(opts ...Option) Options {
 		Client:    client.DefaultClient,
 		Server:    mucp.NewServer(),
 		Registry:  mdns.NewRegistry(),
-		Transport: transport.DefaultTransport,
+		Transport: httpt.NewTransport(),
 		Context:   context.Background(),
 	}
 
