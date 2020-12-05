@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/stack-labs/stack-rpc/broker/http"
+
 	"github.com/stack-labs/stack-rpc/registry/mdns"
 
 	"github.com/stack-labs/stack-rpc/server/mucp"
@@ -37,7 +39,7 @@ type Option func(*Options)
 
 func newOptions(opts ...Option) Options {
 	opt := Options{
-		Broker:    broker.DefaultBroker,
+		Broker:    http.NewBroker(),
 		Client:    client.DefaultClient,
 		Server:    mucp.NewServer(),
 		Registry:  mdns.NewRegistry(),

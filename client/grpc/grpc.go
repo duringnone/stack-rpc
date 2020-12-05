@@ -9,6 +9,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/stack-labs/stack-rpc/broker/http"
+
 	"github.com/stack-labs/stack-rpc/registry/mdns"
 
 	"github.com/stack-labs/stack-rpc/broker"
@@ -625,7 +627,7 @@ func newClient(opts ...client.Option) client.Client {
 	}
 
 	if options.Broker == nil {
-		options.Broker = broker.DefaultBroker
+		options.Broker = http.NewBroker()
 	}
 
 	if options.Registry == nil {
