@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/stack-labs/stack-rpc/server/mucp"
+
 	"github.com/stack-labs/stack-rpc/broker"
 	"github.com/stack-labs/stack-rpc/client"
 	"github.com/stack-labs/stack-rpc/registry"
@@ -35,7 +37,7 @@ func newOptions(opts ...Option) Options {
 	opt := Options{
 		Broker:    broker.DefaultBroker,
 		Client:    client.DefaultClient,
-		Server:    server.DefaultServer,
+		Server:    mucp.NewServer(),
 		Registry:  registry.DefaultRegistry,
 		Transport: transport.DefaultTransport,
 		Context:   context.Background(),

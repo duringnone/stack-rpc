@@ -1,10 +1,12 @@
-package server
+package mucp
 
 import (
 	"context"
 	"errors"
 	"io"
 	"sync"
+
+	"github.com/stack-labs/stack-rpc/server"
 
 	"github.com/stack-labs/stack-rpc/codec"
 )
@@ -15,7 +17,7 @@ type rpcStream struct {
 	id      string
 	closed  bool
 	err     error
-	request Request
+	request server.Request
 	codec   codec.Codec
 	context context.Context
 }
@@ -24,7 +26,7 @@ func (r *rpcStream) Context() context.Context {
 	return r.context
 }
 
-func (r *rpcStream) Request() Request {
+func (r *rpcStream) Request() server.Request {
 	return r.request
 }
 

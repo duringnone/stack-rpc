@@ -60,7 +60,7 @@ var (
 	}
 
 	DefaultServers = map[string]func(...server.Option) server.Server{
-		"rpc":  server.NewServer,
+		"rpc":  smucp.NewServer,
 		"mucp": smucp.NewServer,
 		"grpc": sgrpc.NewServer,
 	}

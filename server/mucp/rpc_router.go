@@ -1,4 +1,4 @@
-package server
+package mucp
 
 // Copyright 2009 The Go Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style
@@ -17,6 +17,8 @@ import (
 	"sync"
 	"unicode"
 	"unicode/utf8"
+
+	"github.com/stack-labs/stack-rpc/server"
 
 	"github.com/stack-labs/stack-rpc/codec"
 	merrors "github.com/stack-labs/stack-rpc/errors"
@@ -75,9 +77,9 @@ type router struct {
 	freeResp *response
 
 	// handler wrappers
-	hdlrWrappers []HandlerWrapper
+	hdlrWrappers []server.HandlerWrapper
 	// subscriber wrappers
-	subWrappers []SubscriberWrapper
+	subWrappers []server.SubscriberWrapper
 
 	su          sync.RWMutex
 	subscribers map[string][]*subscriber
@@ -85,15 +87,15 @@ type router struct {
 
 // rpcRouter encapsulates functions that become a server.Router
 type rpcRouter struct {
-	h func(context.Context, Request, interface{}) error
-	m func(context.Context, Message) error
+	h func(context.Context, server.Request, interface{}) error
+	m func(context.Context, server.Message) error
 }
 
-func (r rpcRouter) ProcessMessage(ctx context.Context, msg Message) error {
+func (r rpcRouter) ProcessMessage(ctx context.Context, msg server.Message) error {
 	return r.m(ctx, msg)
 }
 
-func (r rpcRouter) ServeRequest(ctx context.Context, req Request, rsp Response) error {
+func (r rpcRouter) ServeRequest(ctx context.Context, req server.Request, rsp server.Response) error {
 	return r.h(ctx, req, rsp)
 }
 
@@ -151,7 +153,7 @@ func prepareMethod(method reflect.Method) *methodType {
 
 	if stream {
 		// check stream type
-		streamType := reflect.TypeOf((*Stream)(nil)).Elem()
+		streamType := reflect.TypeOf((*server.Stream)(nil)).Elem()
 		if !argType.Implements(streamType) {
 			log.Log(mname, "argument does not implement Stream interface:", argType)
 			return nil
@@ -224,7 +226,7 @@ func (s *service) call(ctx context.Context, router *router, sending *sync.Mutex,
 	}
 
 	if !mtype.stream {
-		fn := func(ctx context.Context, req Request, rsp interface{}) error {
+		fn := func(ctx context.Context, req server.Request, rsp interface{}) error {
 			returnValues = function.Call([]reflect.Value{s.rcvr, mtype.prepareContext(ctx), reflect.ValueOf(argv.Interface()), reflect.ValueOf(rsp)})
 
 			// The return value for the method is an error.
@@ -260,7 +262,7 @@ func (s *service) call(ctx context.Context, router *router, sending *sync.Mutex,
 	}
 
 	// Invoke the method, providing a new value for the reply.
-	fn := func(ctx context.Context, req Request, stream interface{}) error {
+	fn := func(ctx context.Context, req server.Request, stream interface{}) error {
 		returnValues = function.Call([]reflect.Value{s.rcvr, mtype.prepareContext(ctx), reflect.ValueOf(stream)})
 		if err := returnValues[0].Interface(); err != nil {
 			// the function returned an error, we use that
@@ -332,7 +334,7 @@ func (router *router) freeResponse(resp *response) {
 	router.respLock.Unlock()
 }
 
-func (router *router) readRequest(r Request) (service *service, mtype *methodType, req *request, argv, replyv reflect.Value, keepReading bool, err error) {
+func (router *router) readRequest(r server.Request) (service *service, mtype *methodType, req *request, argv, replyv reflect.Value, keepReading bool, err error) {
 	cc := r.Codec()
 
 	service, mtype, req, keepReading, err = router.readHeader(cc)
@@ -413,11 +415,11 @@ func (router *router) readHeader(cc codec.Reader) (service *service, mtype *meth
 	return
 }
 
-func (router *router) NewHandler(h interface{}, opts ...HandlerOption) Handler {
+func (router *router) NewHandler(h interface{}, opts ...server.HandlerOption) server.Handler {
 	return newRpcHandler(h, opts...)
 }
 
-func (router *router) Handle(h Handler) error {
+func (router *router) Handle(h server.Handler) error {
 	router.mu.Lock()
 	defer router.mu.Unlock()
 	if router.serviceMap == nil {
@@ -462,7 +464,7 @@ func (router *router) Handle(h Handler) error {
 	return nil
 }
 
-func (router *router) ServeRequest(ctx context.Context, r Request, rsp Response) error {
+func (router *router) ServeRequest(ctx context.Context, r server.Request, rsp server.Response) error {
 	sending := new(sync.Mutex)
 	service, mtype, req, argv, replyv, keepReading, err := router.readRequest(r)
 	if err != nil {
@@ -478,11 +480,11 @@ func (router *router) ServeRequest(ctx context.Context, r Request, rsp Response)
 	return service.call(ctx, router, sending, mtype, req, argv, replyv, rsp.Codec())
 }
 
-func (router *router) NewSubscriber(topic string, handler interface{}, opts ...SubscriberOption) Subscriber {
+func (router *router) NewSubscriber(topic string, handler interface{}, opts ...server.SubscriberOption) server.Subscriber {
 	return newSubscriber(topic, handler, opts...)
 }
 
-func (router *router) Subscribe(s Subscriber) error {
+func (router *router) Subscribe(s server.Subscriber) error {
 	sub, ok := s.(*subscriber)
 	if !ok {
 		return fmt.Errorf("invalid subscriber: expected *subscriber")
@@ -506,7 +508,7 @@ func (router *router) Subscribe(s Subscriber) error {
 	return nil
 }
 
-func (router *router) ProcessMessage(ctx context.Context, msg Message) error {
+func (router *router) ProcessMessage(ctx context.Context, msg server.Message) error {
 	var err error
 
 	defer func() {
@@ -580,7 +582,7 @@ func (router *router) ProcessMessage(ctx context.Context, msg Message) error {
 			}
 
 			// create the handler which will honour the SubscriberFunc type
-			fn := func(ctx context.Context, msg Message) error {
+			fn := func(ctx context.Context, msg server.Message) error {
 				var vals []reflect.Value
 				if sub.typ.Kind() != reflect.Func {
 					vals = append(vals, sub.rcvr)

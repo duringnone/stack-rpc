@@ -117,15 +117,3 @@ type Subscriber interface {
 	Endpoints() []*registry.Endpoint
 	Options() SubscriberOptions
 }
-
-type Option func(*Options)
-
-// NewServer returns a new server with options passed in
-func NewServer(opt ...Option) Server {
-	return newRpcServer(opt...)
-}
-
-// NewRouter returns a new router
-func NewRouter() *router {
-	return newRpcRouter()
-}

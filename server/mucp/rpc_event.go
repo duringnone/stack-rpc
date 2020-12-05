@@ -1,4 +1,4 @@
-package server
+package mucp
 
 import (
 	"github.com/stack-labs/stack-rpc/broker"
