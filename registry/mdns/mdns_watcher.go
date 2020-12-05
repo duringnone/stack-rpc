@@ -1,15 +1,17 @@
-package registry
+package mdns
 
 import (
 	"fmt"
 	"strings"
+
+	registry2 "github.com/stack-labs/stack-rpc/registry"
 
 	"github.com/stack-labs/stack-rpc/pkg/mdns"
 )
 
 type mdnsWatcher struct {
 	id   string
-	wo   WatchOptions
+	wo   registry2.WatchOptions
 	ch   chan *mdns.ServiceEntry
 	exit chan struct{}
 	// the mdns domain
@@ -18,7 +20,7 @@ type mdnsWatcher struct {
 	registry *mdnsRegistry
 }
 
-func (m *mdnsWatcher) Next() (*Result, error) {
+func (m *mdnsWatcher) Next() (*registry2.Result, error) {
 	for {
 		select {
 		case e := <-m.ch:
@@ -45,7 +47,7 @@ func (m *mdnsWatcher) Next() (*Result, error) {
 				action = "create"
 			}
 
-			service := &Service{
+			service := &registry2.Service{
 				Name:      txt.Service,
 				Version:   txt.Version,
 				Endpoints: txt.Endpoints,
@@ -57,18 +59,18 @@ func (m *mdnsWatcher) Next() (*Result, error) {
 				continue
 			}
 
-			service.Nodes = append(service.Nodes, &Node{
+			service.Nodes = append(service.Nodes, &registry2.Node{
 				Id:       strings.TrimSuffix(e.Name, suffix),
 				Address:  fmt.Sprintf("%s:%d", e.AddrV4.String(), e.Port),
 				Metadata: txt.Metadata,
 			})
 
-			return &Result{
+			return &registry2.Result{
 				Action:  action,
 				Service: service,
 			}, nil
 		case <-m.exit:
-			return nil, ErrWatcherStopped
+			return nil, registry2.ErrWatcherStopped
 		}
 	}
 }

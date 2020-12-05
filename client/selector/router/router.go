@@ -7,6 +7,8 @@ import (
 	"sort"
 	"sync"
 
+	"github.com/stack-labs/stack-rpc/registry/mdns"
+
 	"github.com/stack-labs/stack-rpc/client"
 	"github.com/stack-labs/stack-rpc/client/selector"
 	"github.com/stack-labs/stack-rpc/registry"
@@ -203,7 +205,7 @@ func NewSelector(opts ...selector.Option) selector.Selector {
 
 	// set default registry if not set
 	if options.Registry == nil {
-		options.Registry = registry.DefaultRegistry
+		options.Registry = mdns.NewRegistry()
 	}
 
 	// try get router from the context

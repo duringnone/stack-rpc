@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/stack-labs/stack-rpc/registry/mdns"
+
 	"github.com/stack-labs/stack-rpc/server/mucp"
 
 	"github.com/stack-labs/stack-rpc/broker"
@@ -47,7 +49,7 @@ func newOptions(opts ...Option) Options {
 		Cmd:       cmd.NewCmd(),
 		Client:    client.DefaultClient,
 		Server:    mucp.NewServer(),
-		Registry:  registry.DefaultRegistry,
+		Registry:  mdns.NewRegistry(),
 		Transport: transport.DefaultTransport,
 		Selector:  selector.DefaultSelector,
 		Logger:    logger.DefaultLogger,

@@ -9,6 +9,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/stack-labs/stack-rpc/registry/mdns"
+
 	"github.com/stack-labs/stack-rpc/broker"
 	"github.com/stack-labs/stack-rpc/client"
 	"github.com/stack-labs/stack-rpc/client/selector"
@@ -627,7 +629,7 @@ func newClient(opts ...client.Option) client.Client {
 	}
 
 	if options.Registry == nil {
-		options.Registry = registry.DefaultRegistry
+		options.Registry = mdns.NewRegistry()
 	}
 
 	if options.Selector == nil {

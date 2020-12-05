@@ -16,8 +16,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/stack-labs/stack-rpc/registry/mdns"
+
 	"github.com/google/uuid"
-	"golang.org/x/net/http2"
 	"github.com/stack-labs/stack-rpc/codec/json"
 	merr "github.com/stack-labs/stack-rpc/errors"
 	"github.com/stack-labs/stack-rpc/registry"
@@ -25,6 +26,7 @@ import (
 	maddr "github.com/stack-labs/stack-rpc/util/addr"
 	mnet "github.com/stack-labs/stack-rpc/util/net"
 	mls "github.com/stack-labs/stack-rpc/util/tls"
+	"golang.org/x/net/http2"
 )
 
 // HTTP Broker is a point to point async broker
@@ -123,7 +125,7 @@ func newHttpBroker(opts ...Option) Broker {
 	// get registry
 	reg, ok := options.Context.Value(registryKey).(registry.Registry)
 	if !ok {
-		reg = registry.DefaultRegistry
+		reg = mdns.NewRegistry()
 	}
 
 	h := &httpBroker{
@@ -418,7 +420,7 @@ func (h *httpBroker) Connect() error {
 	// get registry
 	reg, ok := h.opts.Context.Value(registryKey).(registry.Registry)
 	if !ok {
-		reg = registry.DefaultRegistry
+		reg = mdns.NewRegistry()
 	}
 	// set cache
 	h.r = cache.New(reg)
@@ -481,7 +483,7 @@ func (h *httpBroker) Init(opts ...Option) error {
 	// get registry
 	reg, ok := h.opts.Context.Value(registryKey).(registry.Registry)
 	if !ok {
-		reg = registry.DefaultRegistry
+		reg = mdns.NewRegistry()
 	}
 
 	// get cache

@@ -3,7 +3,7 @@ package mucp
 import (
 	"github.com/stack-labs/stack-rpc/broker"
 	"github.com/stack-labs/stack-rpc/codec"
-	"github.com/stack-labs/stack-rpc/registry"
+	"github.com/stack-labs/stack-rpc/registry/mdns"
 	"github.com/stack-labs/stack-rpc/server"
 	"github.com/stack-labs/stack-rpc/transport"
 )
@@ -25,7 +25,7 @@ func newOptions(opt ...server.Option) server.Options {
 	}
 
 	if opts.Registry == nil {
-		opts.Registry = registry.DefaultRegistry
+		opts.Registry = mdns.NewRegistry()
 	}
 
 	if opts.Transport == nil {

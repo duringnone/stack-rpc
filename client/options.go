@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/stack-labs/stack-rpc/registry/mdns"
+
 	"github.com/stack-labs/stack-rpc/broker"
 	"github.com/stack-labs/stack-rpc/client/selector"
 	"github.com/stack-labs/stack-rpc/codec"
@@ -112,7 +114,7 @@ func newOptions(options ...Option) Options {
 	}
 
 	if opts.Registry == nil {
-		opts.Registry = registry.DefaultRegistry
+		opts.Registry = mdns.NewRegistry()
 	}
 
 	if opts.Selector == nil {
