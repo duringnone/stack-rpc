@@ -1,16 +1,13 @@
-package client
+package mucp
 
 import (
 	"bytes"
 	errs "errors"
 
+	codecu "github.com/stack-labs/stack-rpc/util/codec"
+
 	"github.com/stack-labs/stack-rpc/codec"
 	raw "github.com/stack-labs/stack-rpc/codec/bytes"
-	"github.com/stack-labs/stack-rpc/codec/grpc"
-	"github.com/stack-labs/stack-rpc/codec/json"
-	"github.com/stack-labs/stack-rpc/codec/jsonrpc"
-	"github.com/stack-labs/stack-rpc/codec/proto"
-	"github.com/stack-labs/stack-rpc/codec/protorpc"
 	"github.com/stack-labs/stack-rpc/errors"
 	"github.com/stack-labs/stack-rpc/registry"
 	"github.com/stack-labs/stack-rpc/transport"
@@ -48,30 +45,6 @@ type readWriteCloser struct {
 	wbuf *bytes.Buffer
 	rbuf *bytes.Buffer
 }
-
-var (
-	DefaultContentType = "application/protobuf"
-
-	DefaultCodecs = map[string]codec.NewCodec{
-		"application/grpc":         grpc.NewCodec,
-		"application/grpc+json":    grpc.NewCodec,
-		"application/grpc+proto":   grpc.NewCodec,
-		"application/protobuf":     proto.NewCodec,
-		"application/json":         json.NewCodec,
-		"application/json-rpc":     jsonrpc.NewCodec,
-		"application/proto-rpc":    protorpc.NewCodec,
-		"application/octet-stream": raw.NewCodec,
-	}
-
-	// TODO: remove legacy codec list
-	defaultCodecs = map[string]codec.NewCodec{
-		"application/json":         jsonrpc.NewCodec,
-		"application/json-rpc":     jsonrpc.NewCodec,
-		"application/protobuf":     protorpc.NewCodec,
-		"application/proto-rpc":    protorpc.NewCodec,
-		"application/octet-stream": protorpc.NewCodec,
-	}
-)
 
 func (rwc *readWriteCloser) Read(p []byte) (n int, err error) {
 	return rwc.rbuf.Read(p)
@@ -150,7 +123,7 @@ func setupProtocol(msg *transport.Message, node *registry.Node) codec.NewCodec {
 	}
 
 	// now return codec
-	return defaultCodecs[msg.Header["Content-Type"]]
+	return codecu.DefaultCodecs[msg.Header["Content-Type"]]
 }
 
 func newRpcCodec(req *transport.Message, client transport.Client, c codec.NewCodec, stream string) codec.Codec {

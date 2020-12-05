@@ -4,6 +4,8 @@ package stack
 import (
 	"context"
 
+	cmucp "github.com/stack-labs/stack-rpc/client/mucp"
+
 	"github.com/stack-labs/stack-rpc/client"
 	"github.com/stack-labs/stack-rpc/server"
 )
@@ -73,7 +75,7 @@ func NewFunction(opts ...Option) Function {
 // NewPublisher returns a new Publisher
 func NewPublisher(topic string, c client.Client) Publisher {
 	if c == nil {
-		c = client.NewClient()
+		c = cmucp.NewClient()
 	}
 	return &publisher{c, topic}
 }

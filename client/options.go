@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	codecu "github.com/stack-labs/stack-rpc/util/codec"
+
 	httpt "github.com/stack-labs/stack-rpc/transport/http"
 
 	"github.com/stack-labs/stack-rpc/broker/http"
@@ -91,7 +93,7 @@ type RequestOptions struct {
 	Context context.Context
 }
 
-func newOptions(options ...Option) Options {
+func NewOptions(options ...Option) Options {
 	opts := Options{
 		Codecs: make(map[string]codec.NewCodec),
 		CallOptions: CallOptions{
@@ -110,7 +112,7 @@ func newOptions(options ...Option) Options {
 	}
 
 	if len(opts.ContentType) == 0 {
-		opts.ContentType = DefaultContentType
+		opts.ContentType = codecu.DefaultContentType
 	}
 
 	if opts.Broker == nil {

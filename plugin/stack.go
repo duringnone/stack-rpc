@@ -39,7 +39,7 @@ var (
 	}
 
 	DefaultClients = map[string]func(...client.Option) client.Client{
-		"rpc":  client.NewClient,
+		"rpc":  cmucp.NewClient,
 		"mucp": cmucp.NewClient,
 		"grpc": cgrpc.NewClient,
 	}

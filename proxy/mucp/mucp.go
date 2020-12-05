@@ -10,6 +10,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/stack-labs/stack-rpc/client/mucp"
+
 	"github.com/stack-labs/stack-rpc/client"
 	"github.com/stack-labs/stack-rpc/client/selector"
 	"github.com/stack-labs/stack-rpc/codec"
@@ -551,7 +553,7 @@ func NewProxy(opts ...options.Option) proxy.Proxy {
 
 	// set the default client
 	if p.Client == nil {
-		p.Client = client.DefaultClient
+		p.Client = mucp.NewClient()
 	}
 
 	// get client

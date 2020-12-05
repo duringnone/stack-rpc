@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	cmucp "github.com/stack-labs/stack-rpc/client/mucp"
+
 	httpt "github.com/stack-labs/stack-rpc/transport/http"
 
 	"github.com/stack-labs/stack-rpc/broker/http"
@@ -51,7 +53,7 @@ func newOptions(opts ...Option) Options {
 	opt := Options{
 		Broker:    http.NewBroker(),
 		Cmd:       cmd.NewCmd(),
-		Client:    client.DefaultClient,
+		Client:    cmucp.NewClient(),
 		Server:    mucp.NewServer(),
 		Registry:  mdns.NewRegistry(),
 		Transport: httpt.NewTransport(),

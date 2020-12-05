@@ -1,14 +1,70 @@
-package client
+package mucp
 
 import (
 	"context"
 	"fmt"
 	"testing"
 
+	"github.com/stack-labs/stack-rpc/client"
+
 	"github.com/stack-labs/stack-rpc/client/selector"
 	"github.com/stack-labs/stack-rpc/errors"
 	"github.com/stack-labs/stack-rpc/registry"
 	"github.com/stack-labs/stack-rpc/registry/memory"
+)
+
+var (
+	// mock data
+	testData = map[string][]*registry.Service{
+		"foo": {
+			{
+				Name:    "foo",
+				Version: "1.0.0",
+				Nodes: []*registry.Node{
+					{
+						Id:      "foo-1.0.0-123",
+						Address: "localhost:9999",
+						Metadata: map[string]string{
+							"protocol": "mucp",
+						},
+					},
+					{
+						Id:      "foo-1.0.0-321",
+						Address: "localhost:9999",
+						Metadata: map[string]string{
+							"protocol": "mucp",
+						},
+					},
+				},
+			},
+			{
+				Name:    "foo",
+				Version: "1.0.1",
+				Nodes: []*registry.Node{
+					{
+						Id:      "foo-1.0.1-321",
+						Address: "localhost:6666",
+						Metadata: map[string]string{
+							"protocol": "mucp",
+						},
+					},
+				},
+			},
+			{
+				Name:    "foo",
+				Version: "1.0.3",
+				Nodes: []*registry.Node{
+					{
+						Id:      "foo-1.0.3-345",
+						Address: "localhost:8888",
+						Metadata: map[string]string{
+							"protocol": "mucp",
+						},
+					},
+				},
+			},
+		},
+	}
 )
 
 func newTestRegistry() registry.Registry {
@@ -21,8 +77,8 @@ func TestCallAddress(t *testing.T) {
 	endpoint := "Test.Endpoint"
 	address := "10.1.10.1:8080"
 
-	wrap := func(cf CallFunc) CallFunc {
-		return func(ctx context.Context, node *registry.Node, req Request, rsp interface{}, opts CallOptions) error {
+	wrap := func(cf client.CallFunc) client.CallFunc {
+		return func(ctx context.Context, node *registry.Node, req client.Request, rsp interface{}, opts client.CallOptions) error {
 			called = true
 
 			if req.Service() != service {
@@ -44,15 +100,15 @@ func TestCallAddress(t *testing.T) {
 
 	r := newTestRegistry()
 	c := NewClient(
-		Registry(r),
-		WrapCall(wrap),
+		client.Registry(r),
+		client.WrapCall(wrap),
 	)
 	c.Options().Selector.Init(selector.Registry(r))
 
 	req := c.NewRequest(service, endpoint, nil)
 
 	// test calling remote address
-	if err := c.Call(context.Background(), req, nil, WithAddress(address)); err != nil {
+	if err := c.Call(context.Background(), req, nil, client.WithAddress(address)); err != nil {
 		t.Fatal("call with address error", err)
 	}
 
@@ -69,8 +125,8 @@ func TestCallRetry(t *testing.T) {
 
 	var called int
 
-	wrap := func(cf CallFunc) CallFunc {
-		return func(ctx context.Context, node *registry.Node, req Request, rsp interface{}, opts CallOptions) error {
+	wrap := func(cf client.CallFunc) client.CallFunc {
+		return func(ctx context.Context, node *registry.Node, req client.Request, rsp interface{}, opts client.CallOptions) error {
 			called++
 			if called == 1 {
 				return errors.InternalServerError("test.error", "retry request")
@@ -83,15 +139,15 @@ func TestCallRetry(t *testing.T) {
 
 	r := newTestRegistry()
 	c := NewClient(
-		Registry(r),
-		WrapCall(wrap),
+		client.Registry(r),
+		client.WrapCall(wrap),
 	)
 	c.Options().Selector.Init(selector.Registry(r))
 
 	req := c.NewRequest(service, endpoint, nil)
 
 	// test calling remote address
-	if err := c.Call(context.Background(), req, nil, WithAddress(address)); err != nil {
+	if err := c.Call(context.Background(), req, nil, client.WithAddress(address)); err != nil {
 		t.Fatal("call with address error", err)
 	}
 
@@ -108,8 +164,8 @@ func TestCallWrapper(t *testing.T) {
 	endpoint := "Test.Endpoint"
 	address := "10.1.10.1:8080"
 
-	wrap := func(cf CallFunc) CallFunc {
-		return func(ctx context.Context, node *registry.Node, req Request, rsp interface{}, opts CallOptions) error {
+	wrap := func(cf client.CallFunc) client.CallFunc {
+		return func(ctx context.Context, node *registry.Node, req client.Request, rsp interface{}, opts client.CallOptions) error {
 			called = true
 
 			if req.Service() != service {
@@ -131,8 +187,8 @@ func TestCallWrapper(t *testing.T) {
 
 	r := newTestRegistry()
 	c := NewClient(
-		Registry(r),
-		WrapCall(wrap),
+		client.Registry(r),
+		client.WrapCall(wrap),
 	)
 	c.Options().Selector.Init(selector.Registry(r))
 

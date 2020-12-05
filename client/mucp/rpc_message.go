@@ -1,4 +1,6 @@
-package client
+package mucp
+
+import "github.com/stack-labs/stack-rpc/client"
 
 type message struct {
 	topic       string
@@ -6,8 +8,8 @@ type message struct {
 	payload     interface{}
 }
 
-func newMessage(topic string, payload interface{}, contentType string, opts ...MessageOption) Message {
-	var options MessageOptions
+func newMessage(topic string, payload interface{}, contentType string, opts ...client.MessageOption) client.Message {
+	var options client.MessageOptions
 	for _, o := range opts {
 		o(&options)
 	}

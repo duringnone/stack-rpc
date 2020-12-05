@@ -5,6 +5,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/stack-labs/stack-rpc/client/mucp"
+
 	"github.com/stack-labs/stack-rpc/registry/mdns"
 
 	"github.com/stack-labs/stack-rpc/client"
@@ -151,7 +153,7 @@ func NewRegistry(opts ...registry.Option) registry.Registry {
 	mReg := mdns.NewRegistry()
 
 	// create new client with mdns
-	cli := client.NewClient(
+	cli := mucp.NewClient(
 		client.Registry(mReg),
 	)
 

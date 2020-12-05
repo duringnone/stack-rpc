@@ -12,6 +12,8 @@ import (
 	"sync"
 	"time"
 
+	codecu "github.com/stack-labs/stack-rpc/util/codec"
+
 	"github.com/stack-labs/stack-rpc/server"
 
 	"github.com/stack-labs/stack-rpc/broker"
@@ -44,7 +46,7 @@ type rpcServer struct {
 	wg *sync.WaitGroup
 }
 
-func newRpcServer(opts ...server.Option) server.Server {
+func NewServer(opts ...server.Option) server.Server {
 	options := newOptions(opts...)
 	router := newRpcRouter()
 	router.hdlrWrappers = options.HdlrWrappers
@@ -76,8 +78,8 @@ func (s *rpcServer) HandleEvent(e broker.Event) error {
 
 	// default content type
 	if len(ct) == 0 {
-		msg.Header["Content-Type"] = DefaultContentType
-		ct = DefaultContentType
+		msg.Header["Content-Type"] = codecu.DefaultContentType
+		ct = codecu.DefaultContentType
 	}
 
 	// get codec
@@ -287,8 +289,8 @@ func (s *rpcServer) ServeConn(sock transport.Socket) {
 
 		// if there's no content type default it
 		if len(ct) == 0 {
-			msg.Header["Content-Type"] = DefaultContentType
-			ct = DefaultContentType
+			msg.Header["Content-Type"] = codecu.DefaultContentType
+			ct = codecu.DefaultContentType
 		}
 
 		// setup old protocol
@@ -430,7 +432,7 @@ func (s *rpcServer) newCodec(contentType string) (codec.NewCodec, error) {
 	if cf, ok := s.opts.Codecs[contentType]; ok {
 		return cf, nil
 	}
-	if cf, ok := DefaultCodecs[contentType]; ok {
+	if cf, ok := codecu.DefaultCodecs[contentType]; ok {
 		return cf, nil
 	}
 	return nil, fmt.Errorf("Unsupported Content-Type: %s", contentType)

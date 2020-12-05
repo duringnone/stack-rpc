@@ -4,7 +4,8 @@ import (
 	"context"
 	"sync"
 
-	"github.com/stack-labs/stack-rpc/client"
+	"github.com/stack-labs/stack-rpc/client/mucp"
+
 	"github.com/stack-labs/stack-rpc/runtime"
 	pb "github.com/stack-labs/stack-rpc/runtime/service/proto"
 )
@@ -26,7 +27,7 @@ func NewRuntime(opts ...runtime.Option) runtime.Runtime {
 	}
 
 	// create default client
-	cli := client.DefaultClient
+	cli := mucp.NewClient()
 
 	return &svc{
 		options: options,

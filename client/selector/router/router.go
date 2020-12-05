@@ -7,6 +7,8 @@ import (
 	"sort"
 	"sync"
 
+	"github.com/stack-labs/stack-rpc/client/mucp"
+
 	"github.com/stack-labs/stack-rpc/registry/mdns"
 
 	"github.com/stack-labs/stack-rpc/client"
@@ -220,7 +222,7 @@ func NewSelector(opts ...selector.Option) selector.Selector {
 	// try get client from the context
 	c, ok := options.Context.Value(clientKey{}).(client.Client)
 	if !ok {
-		c = client.DefaultClient
+		c = mucp.NewClient()
 	}
 
 	// get the router from env vars if its a remote service

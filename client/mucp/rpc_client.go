@@ -1,4 +1,4 @@
-package client
+package mucp
 
 import (
 	"context"
@@ -7,6 +7,10 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+
+	codecu "github.com/stack-labs/stack-rpc/util/codec"
+
+	"github.com/stack-labs/stack-rpc/client"
 
 	"github.com/google/uuid"
 	"github.com/stack-labs/stack-rpc/broker"
@@ -23,13 +27,13 @@ import (
 
 type rpcClient struct {
 	once sync.Once
-	opts Options
+	opts client.Options
 	pool pool.Pool
 	seq  uint64
 }
 
-func newRpcClient(opt ...Option) Client {
-	opts := newOptions(opt...)
+func NewClient(opt ...client.Option) client.Client {
+	opts := client.NewOptions(opt...)
 
 	p := pool.NewPool(
 		pool.Size(opts.PoolSize),
@@ -44,7 +48,7 @@ func newRpcClient(opt ...Option) Client {
 		seq:  0,
 	}
 
-	c := Client(rc)
+	c := client.Client(rc)
 
 	// wrap in reverse
 	for i := len(opts.Wrappers); i > 0; i-- {
@@ -58,13 +62,13 @@ func (r *rpcClient) newCodec(contentType string) (codec.NewCodec, error) {
 	if c, ok := r.opts.Codecs[contentType]; ok {
 		return c, nil
 	}
-	if cf, ok := DefaultCodecs[contentType]; ok {
+	if cf, ok := codecu.DefaultCodecs[contentType]; ok {
 		return cf, nil
 	}
 	return nil, fmt.Errorf("Unsupported Content-Type: %s", contentType)
 }
 
-func (r *rpcClient) call(ctx context.Context, node *registry.Node, req Request, resp interface{}, opts CallOptions) error {
+func (r *rpcClient) call(ctx context.Context, node *registry.Node, req client.Request, resp interface{}, opts client.CallOptions) error {
 	address := node.Address
 
 	msg := &transport.Message{
@@ -179,7 +183,7 @@ func (r *rpcClient) call(ctx context.Context, node *registry.Node, req Request, 
 	return nil
 }
 
-func (r *rpcClient) stream(ctx context.Context, node *registry.Node, req Request, opts CallOptions) (Stream, error) {
+func (r *rpcClient) stream(ctx context.Context, node *registry.Node, req client.Request, opts client.CallOptions) (client.Stream, error) {
 	address := node.Address
 
 	msg := &transport.Message{
@@ -288,7 +292,7 @@ func (r *rpcClient) stream(ctx context.Context, node *registry.Node, req Request
 	return stream, nil
 }
 
-func (r *rpcClient) Init(opts ...Option) error {
+func (r *rpcClient) Init(opts ...client.Option) error {
 	size := r.opts.PoolSize
 	ttl := r.opts.PoolTTL
 	tr := r.opts.Transport
@@ -312,7 +316,7 @@ func (r *rpcClient) Init(opts ...Option) error {
 	return nil
 }
 
-func (r *rpcClient) Options() Options {
+func (r *rpcClient) Options() client.Options {
 	return r.opts
 }
 
@@ -332,7 +336,7 @@ func (r *rpcClient) hasProxy() bool {
 }
 
 // next returns an iterator for the next nodes to call
-func (r *rpcClient) next(request Request, opts CallOptions) (selector.Next, error) {
+func (r *rpcClient) next(request client.Request, opts client.CallOptions) (selector.Next, error) {
 	service := request.Service()
 
 	// get proxy
@@ -377,7 +381,7 @@ func (r *rpcClient) next(request Request, opts CallOptions) (selector.Next, erro
 	return next, nil
 }
 
-func (r *rpcClient) Call(ctx context.Context, request Request, response interface{}, opts ...CallOption) error {
+func (r *rpcClient) Call(ctx context.Context, request client.Request, response interface{}, opts ...client.CallOption) error {
 	// make a copy of call opts
 	callOpts := r.opts.CallOptions
 	for _, opt := range opts {
@@ -399,7 +403,7 @@ func (r *rpcClient) Call(ctx context.Context, request Request, response interfac
 	} else {
 		// got a deadline so no need to setup context
 		// but we need to set the timeout we pass along
-		opt := WithRequestTimeout(d.Sub(time.Now()))
+		opt := client.WithRequestTimeout(d.Sub(time.Now()))
 		opt(&callOpts)
 	}
 
@@ -488,7 +492,7 @@ func (r *rpcClient) Call(ctx context.Context, request Request, response interfac
 	return gerr
 }
 
-func (r *rpcClient) Stream(ctx context.Context, request Request, opts ...CallOption) (Stream, error) {
+func (r *rpcClient) Stream(ctx context.Context, request client.Request, opts ...client.CallOption) (client.Stream, error) {
 	// make a copy of call opts
 	callOpts := r.opts.CallOptions
 	for _, opt := range opts {
@@ -507,7 +511,7 @@ func (r *rpcClient) Stream(ctx context.Context, request Request, opts ...CallOpt
 	default:
 	}
 
-	call := func(i int) (Stream, error) {
+	call := func(i int) (client.Stream, error) {
 		// call backoff first. Someone may want an initial start delay
 		t, err := callOpts.Backoff(ctx, request, i)
 		if err != nil {
@@ -534,7 +538,7 @@ func (r *rpcClient) Stream(ctx context.Context, request Request, opts ...CallOpt
 	}
 
 	type response struct {
-		stream Stream
+		stream client.Stream
 		err    error
 	}
 
@@ -580,8 +584,8 @@ func (r *rpcClient) Stream(ctx context.Context, request Request, opts ...CallOpt
 	return nil, grr
 }
 
-func (r *rpcClient) Publish(ctx context.Context, msg Message, opts ...PublishOption) error {
-	options := PublishOptions{
+func (r *rpcClient) Publish(ctx context.Context, msg client.Message, opts ...client.PublishOption) error {
+	options := client.PublishOptions{
 		Context: context.Background(),
 	}
 	for _, o := range opts {
@@ -651,11 +655,11 @@ func (r *rpcClient) Publish(ctx context.Context, msg Message, opts ...PublishOpt
 	})
 }
 
-func (r *rpcClient) NewMessage(topic string, message interface{}, opts ...MessageOption) Message {
+func (r *rpcClient) NewMessage(topic string, message interface{}, opts ...client.MessageOption) client.Message {
 	return newMessage(topic, message, r.opts.ContentType, opts...)
 }
 
-func (r *rpcClient) NewRequest(service, method string, request interface{}, reqOpts ...RequestOption) Request {
+func (r *rpcClient) NewRequest(service, method string, request interface{}, reqOpts ...client.RequestOption) client.Request {
 	return newRequest(service, method, request, r.opts.ContentType, reqOpts...)
 }
 

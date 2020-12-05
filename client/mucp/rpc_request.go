@@ -1,6 +1,7 @@
-package client
+package mucp
 
 import (
+	"github.com/stack-labs/stack-rpc/client"
 	"github.com/stack-labs/stack-rpc/codec"
 )
 
@@ -11,11 +12,11 @@ type rpcRequest struct {
 	contentType string
 	codec       codec.Codec
 	body        interface{}
-	opts        RequestOptions
+	opts        client.RequestOptions
 }
 
-func newRequest(service, endpoint string, request interface{}, contentType string, reqOpts ...RequestOption) Request {
-	var opts RequestOptions
+func newRequest(service, endpoint string, request interface{}, contentType string, reqOpts ...client.RequestOption) client.Request {
+	var opts client.RequestOptions
 
 	for _, o := range reqOpts {
 		o(&opts)

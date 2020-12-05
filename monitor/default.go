@@ -6,6 +6,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/stack-labs/stack-rpc/client/mucp"
+
 	"github.com/stack-labs/stack-rpc/registry/mdns"
 
 	"github.com/stack-labs/stack-rpc/client"
@@ -312,7 +314,7 @@ func (m *monitor) Stop() error {
 
 func newMonitor(opts ...Option) Monitor {
 	options := Options{
-		Client:   client.DefaultClient,
+		Client:   mucp.NewClient(),
 		Registry: mdns.NewRegistry(),
 	}
 
