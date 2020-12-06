@@ -17,7 +17,7 @@ import (
 	"github.com/stack-labs/stack-rpc/codec"
 	"github.com/stack-labs/stack-rpc/codec/bytes"
 	"github.com/stack-labs/stack-rpc/errors"
-	"github.com/stack-labs/stack-rpc/metadata"
+	"github.com/stack-labs/stack-rpc/pkg/metadata"
 	"github.com/stack-labs/stack-rpc/proxy"
 	"github.com/stack-labs/stack-rpc/router"
 	"github.com/stack-labs/stack-rpc/server"

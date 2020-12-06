@@ -14,7 +14,7 @@ type Metadata map[string]string
 
 // Copy makes a copy of the metadata
 func Copy(md Metadata) Metadata {
-	cmd := make(Metadata)
+	cmd := make(Metadata, len(md))
 	for k, v := range md {
 		cmd[k] = v
 	}
