@@ -18,8 +18,6 @@ import (
 	"github.com/stack-labs/stack-rpc/registry/mdns"
 	rmem "github.com/stack-labs/stack-rpc/registry/memory"
 	regSrv "github.com/stack-labs/stack-rpc/registry/service"
-	"github.com/stack-labs/stack-rpc/runtime"
-	"github.com/stack-labs/stack-rpc/runtime/kubernetes"
 	"github.com/stack-labs/stack-rpc/server"
 	sgrpc "github.com/stack-labs/stack-rpc/server/grpc"
 	smucp "github.com/stack-labs/stack-rpc/server/mucp"
@@ -71,10 +69,5 @@ var (
 		"http":   thttp.NewTransport,
 		"grpc":   tgrpc.NewTransport,
 		"quic":   quic.NewTransport,
-	}
-
-	DefaultRuntimes = map[string]func(...runtime.Option) runtime.Runtime{
-		"local":      runtime.NewRuntime,
-		"kubernetes": kubernetes.NewRuntime,
 	}
 )
