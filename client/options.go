@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	registry2 "github.com/stack-labs/stack-rpc/client/selector/registry"
+
 	codecu "github.com/stack-labs/stack-rpc/util/codec"
 
 	httpt "github.com/stack-labs/stack-rpc/transport/http"
@@ -124,7 +126,7 @@ func NewOptions(options ...Option) Options {
 	}
 
 	if opts.Selector == nil {
-		opts.Selector = selector.NewSelector(
+		opts.Selector = registry2.NewSelector(
 			selector.Registry(opts.Registry),
 		)
 	}

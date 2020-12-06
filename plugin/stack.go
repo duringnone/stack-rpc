@@ -11,6 +11,7 @@ import (
 	cmucp "github.com/stack-labs/stack-rpc/client/mucp"
 	"github.com/stack-labs/stack-rpc/client/selector"
 	"github.com/stack-labs/stack-rpc/client/selector/dns"
+	selectorR "github.com/stack-labs/stack-rpc/client/selector/registry"
 	"github.com/stack-labs/stack-rpc/client/selector/router"
 	"github.com/stack-labs/stack-rpc/client/selector/static"
 	"github.com/stack-labs/stack-rpc/registry"
@@ -52,9 +53,9 @@ var (
 	}
 
 	DefaultSelectors = map[string]func(...selector.Option) selector.Selector{
-		"default": selector.NewSelector,
+		"default": selectorR.NewSelector,
 		"dns":     dns.NewSelector,
-		"cache":   selector.NewSelector,
+		"cache":   selectorR.NewSelector,
 		"router":  router.NewSelector,
 		"static":  static.NewSelector,
 	}

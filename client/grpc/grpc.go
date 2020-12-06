@@ -9,20 +9,18 @@ import (
 	"sync"
 	"time"
 
-	"github.com/stack-labs/stack-rpc/broker/http"
-
-	"github.com/stack-labs/stack-rpc/registry/mdns"
-
 	"github.com/stack-labs/stack-rpc/broker"
+	"github.com/stack-labs/stack-rpc/broker/http"
 	"github.com/stack-labs/stack-rpc/client"
 	"github.com/stack-labs/stack-rpc/client/selector"
+	selectorR "github.com/stack-labs/stack-rpc/client/selector/registry"
 	"github.com/stack-labs/stack-rpc/codec"
 	raw "github.com/stack-labs/stack-rpc/codec/bytes"
 	"github.com/stack-labs/stack-rpc/errors"
 	"github.com/stack-labs/stack-rpc/metadata"
 	"github.com/stack-labs/stack-rpc/registry"
+	"github.com/stack-labs/stack-rpc/registry/mdns"
 	"github.com/stack-labs/stack-rpc/transport"
-
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/encoding"
@@ -635,7 +633,7 @@ func newClient(opts ...client.Option) client.Client {
 	}
 
 	if options.Selector == nil {
-		options.Selector = selector.NewSelector(
+		options.Selector = selectorR.NewSelector(
 			selector.Registry(options.Registry),
 		)
 	}

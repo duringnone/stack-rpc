@@ -7,8 +7,9 @@ import (
 	"github.com/stack-labs/stack-rpc/broker"
 	"github.com/stack-labs/stack-rpc/broker/http"
 	"github.com/stack-labs/stack-rpc/client"
-	cmucp "github.com/stack-labs/stack-rpc/client/mucp"
+	clientM "github.com/stack-labs/stack-rpc/client/mucp"
 	"github.com/stack-labs/stack-rpc/client/selector"
+	selectorR "github.com/stack-labs/stack-rpc/client/selector/registry"
 	"github.com/stack-labs/stack-rpc/cmd"
 	"github.com/stack-labs/stack-rpc/config"
 	"github.com/stack-labs/stack-rpc/logger"
@@ -18,7 +19,7 @@ import (
 	"github.com/stack-labs/stack-rpc/server"
 	"github.com/stack-labs/stack-rpc/server/mucp"
 	"github.com/stack-labs/stack-rpc/transport"
-	httpt "github.com/stack-labs/stack-rpc/transport/http"
+	transportH "github.com/stack-labs/stack-rpc/transport/http"
 )
 
 type Options struct {
@@ -48,11 +49,11 @@ func newOptions(opts ...Option) Options {
 	opt := Options{
 		Broker:    http.NewBroker(),
 		Cmd:       cmd.NewCmd(),
-		Client:    cmucp.NewClient(),
+		Client:    clientM.NewClient(),
 		Server:    mucp.NewServer(),
 		Registry:  mdns.NewRegistry(),
-		Transport: httpt.NewTransport(),
-		Selector:  selector.DefaultSelector,
+		Transport: transportH.NewTransport(),
+		Selector:  selectorR.NewSelector(),
 		Logger:    logger.DefaultLogger,
 		Config:    config.DefaultConfig,
 		Context:   context.Background(),
